@@ -48,6 +48,51 @@ function insertArr($tableName, $insData){
     
     $query = "INSERT INTO $tableName ($columns) VALUES ($values)";
     
+    // For debug uncomment echo statement
+    // echo $query . "<br>";
+    
+    mysql_query($query) or die(mysql_error());
+    
+    // Get last id for geneal purposes
+    $id = mysql_insert_id();
+    mysql_close($db->get_link());
+    
+    // Return last id for future usage
+    return $id;
+}
+
+/**
+ * Update an associative array with conditions into a MySQL database
+ *
+ * @example
+ *    $data = array('field1' => 'data1', 'field2'=> 'data2');
+ *    $conditions = array('key1' => 'id1', 'key2' => 'id2');
+ *    updateArr("tableName", $data, $conditions);
+ */
+function updateArr($tableName, $insData, $conditions = array()) {
+    $db = new database();
+    
+    $valueStrings = array();
+    foreach ($insData as $name => $value) {
+        $valueStrings[] = $name . " = '" . $value . "'";
+    }
+    $conditionStrings = array();
+    foreach ($conditions as $column => $value) {
+        $conditionString = $column;
+        $conditionString .= is_array($value)
+            ? ("IN ('" . implode("','", $value) . "')")
+            : (" = '" . $value . "'")
+        ;
+        $conditionStrings[] = $conditionString;
+    }
+    $query  = 'UPDATE ' . $tableName
+        . ' SET ' . implode(', ', $valueStrings)
+        . ' WHERE ' . implode(' AND ', $conditionStrings)
+    ;
+    
+    // For debug uncomment echo statement
+    // echo $query . "<br>";
+    
     mysql_query($query) or die(mysql_error());
     mysql_close($db->get_link());
 }
