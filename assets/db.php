@@ -1,9 +1,10 @@
 <?php
 /**
- * Thanks to circuitry http://stackoverflow.com/questions/10054633/insert-array-into-mysql-database-with-php
  * 
  * The MIT License (MIT)
  * Copyright (c) 2014 Werraton Consulting
+ *
+ * Thanks to circuitry http://stackoverflow.com/questions/10054633/insert-array-into-mysql-database-with-php
  *
  * Class to initiate a new MySQL connection based on $dbInfo settings found in dbSettings.php
  *
@@ -67,7 +68,7 @@ function insertArr($tableName, $insData){
  * @example
  *    $data = array('field1' => 'data1', 'field2'=> 'data2');
  *    $conditions = array('key1' => 'id1', 'key2' => 'id2');
- *    updateArr("tableName", $data, $conditions);
+ *    updateArr("databaseName.tableName", $data, $conditions);
  */
 function updateArr($tableName, $insData, $conditions = array()) {
     $db = new database();
@@ -87,8 +88,7 @@ function updateArr($tableName, $insData, $conditions = array()) {
     }
     $query  = 'UPDATE ' . $tableName
         . ' SET ' . implode(', ', $valueStrings)
-        . ' WHERE ' . implode(' AND ', $conditionStrings)
-    ;
+        . ' WHERE ' . implode(' AND ', $conditionStrings);
     
     // For debug uncomment echo statement
     // echo $query . "<br>";
@@ -96,4 +96,27 @@ function updateArr($tableName, $insData, $conditions = array()) {
     mysql_query($query) or die(mysql_error());
     mysql_close($db->get_link());
 }
+
+/**
+* Select from MySQL database and return array of data
+* 
+* @example
+*   $query = "key1 = '1' OR key2 = '2' AND value = '3' ORDER BY `id` DESC";
+*   selectArr("databaseName.tableName", $query);
+*/
+function selectArr($tableName, $conditions) {
+    $db = new database();
+    
+    if ( isset($conditions) ) { $search = " WHERE " . $conditions; }
+    $query = "SELECT * FROM " . $tableName . $search;
+    
+    // For debug uncomment echo statement
+    echo $query . "<br>";
+    
+    $result = mysql_query($query) or die(mysql_error());
+    mysql_close($db->get_link());
+    
+    return $result;
+}
+
 ?>
