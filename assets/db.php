@@ -25,6 +25,7 @@ class database{
     }
     function openConnection(){
     $this->databaseLink = mysql_connect($this->database, $this->mysql_user, $this->mysql_pass);
+        mysql_set_charset("utf8", $this->databaseLink);
     }
 
     function get_link(){
